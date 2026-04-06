@@ -14,6 +14,25 @@ canvas {
     box-shadow: 0 0 20px #008CFF;
 }
 
+#game-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#scoreboard {
+    display: flex;
+    gap: 50px;
+    color: #fff;
+    font-size: 1.2em;
+    letter-spacing: 1px;
+}
+
+#score-p1    { color: #ff0000; }
+#score-p2    { color: #00ff00; }
+#score-draws { color: #aaa; }
+
 /* ---- Page de connexion ---- */
 #login-box {
     background: #111;
