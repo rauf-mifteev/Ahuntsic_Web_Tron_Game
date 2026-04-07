@@ -26,12 +26,27 @@ canvas {
     gap: 50px;
     color: #fff;
     font-size: 1.2em;
-    letter-spacing: 1px;
 }
 
 #score-p1    { color: #ff0000; }
 #score-p2    { color: #00ff00; }
 #score-draws { color: #aaa; }
+
+#color-controls {
+    display: flex;
+    gap: 30px;
+    color: #fff;
+    font-size: 0.95em;
+}
+
+#color-controls input[type="color"] {
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 36px;
+    height: 24px;
+    vertical-align: middle;
+}
 
 /* ---- Page de connexion ---- */
 #login-box {

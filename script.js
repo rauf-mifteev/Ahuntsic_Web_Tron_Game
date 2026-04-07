@@ -42,7 +42,6 @@ class TronGame {
         this.x0   = (this.canvas.width  - this.cols * CELL_SIZE) / 2;
         this.y0   = (this.canvas.height - this.rows * CELL_SIZE) / 2;
 
-        // Scores conservés entre les tours
         this.scores = { p1: 0, p2: 0, draws: 0 };
         this.result = null;
 
@@ -60,6 +59,14 @@ class TronGame {
         this.grid[this.player2.x][this.player2.y] = CELL_PLAYER2;
 
         document.addEventListener('keydown', (e) => this.handleInput(e));
+
+        // Changement de couleur des traces en temps réel
+        document.getElementById("color1").addEventListener("input", (e) => {
+            this.player1.color = e.target.value;
+        });
+        document.getElementById("color2").addEventListener("input", (e) => {
+            this.player2.color = e.target.value;
+        });
     }
 
     createGrid() {
@@ -69,29 +76,20 @@ class TronGame {
     }
 
     handleInput(e) {
-        // Touche ENTER pendant Game Over - nouveau tour
-        if (e.keyCode === 13 && this.result !== null) {
-            this.resetRound();
-            return;
-        }
+        if (e.keyCode === 13 && this.result !== null) { this.resetRound(); return; }
         this.player1.changeDirection(e.keyCode);
         this.player2.changeDirection(e.keyCode);
     }
 
-    // Remet les positions et la grille à zéro (les scores restent)
     resetRound() {
-        this.result  = null;
-        this.grid    = this.createGrid();
+        this.result = null;
+        this.grid   = this.createGrid();
 
-        this.player1.x = Math.floor(this.cols / 2);
-        this.player1.y = this.rows - 2;
-        this.player1.vx = 0; this.player1.vy = -1;
-        this.player1.alive = true;
+        this.player1.x = Math.floor(this.cols / 2); this.player1.y = this.rows - 2;
+        this.player1.vx = 0; this.player1.vy = -1; this.player1.alive = true;
 
-        this.player2.x = Math.floor(this.cols / 2);
-        this.player2.y = 2;
-        this.player2.vx = 0; this.player2.vy = 1;
-        this.player2.alive = true;
+        this.player2.x = Math.floor(this.cols / 2); this.player2.y = 2;
+        this.player2.vx = 0; this.player2.vy = 1;  this.player2.alive = true;
 
         this.grid[this.player1.x][this.player1.y] = CELL_PLAYER1;
         this.grid[this.player2.x][this.player2.y] = CELL_PLAYER2;
@@ -109,16 +107,13 @@ class TronGame {
 
         if ((p1crashes && p2crashes) || headOn) {
             this.player1.die(); this.player2.die();
-            this.result = "draw";
-            this.scores.draws++;
+            this.result = "draw"; this.scores.draws++;
         } else if (p1crashes) {
             this.player1.die();
-            this.result = "player2";
-            this.scores.p2++;
+            this.result = "player2"; this.scores.p2++;
         } else if (p2crashes) {
             this.player2.die();
-            this.result = "player1";
-            this.scores.p1++;
+            this.result = "player1"; this.scores.p1++;
         } else {
             this.grid[next1.x][next1.y] = CELL_PLAYER1;
             this.player1.move(next1.x, next1.y);
@@ -126,7 +121,6 @@ class TronGame {
             this.player2.move(next2.x, next2.y);
         }
 
-        // Mettre à jour l'affichage des scores dans le DOM
         if (this.result) this.updateScoreDisplay();
     }
 
