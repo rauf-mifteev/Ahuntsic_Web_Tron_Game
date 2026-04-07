@@ -4,7 +4,7 @@
 
 Ce projet est réalisé dans le cadre du cours de Développement Web au Collège Ahuntsic. Il consiste à compléter et enrichir un jeu Tron multijoueur en **JavaScript** en utilisant la programmation orientée objet et les API natives du navigateur (DOM, Canvas, Événements).
 
-En partant d'un fichier HTML unique fonctionnel, le projet est restructuré et enrichi en **10 étapes successives** cumulatives :
+En partant d'un fichier HTML unique fonctionnel, le projet est restructuré et enrichi en 10 étapes successives cumulatives :
 
 | Étape | Fonctionnalité | Concepts appliqués |
 |---|---|---|
@@ -27,11 +27,11 @@ Le projet ne requiert aucune dépendance externe. Il tourne entièrement dans le
 
 * HTML5
 * CSS3
-* JavaScript (ES6+), incluant les classes, les fonctions fléchées et les constantes
+* JavaScript (ES6+)
 
 ## Lancer le projet
 
-Aucune installation n'est requise. Ouvrez simplement le fichier `login.html` de l'étape souhaitée dans un navigateur web moderne (Chrome, Firefox, Edge).
+Aucune installation n'est requise. Ouvrez simplement le fichier `login.html` dans un navigateur web moderne (Chrome, Firefox, Edge).
 
 ```
 login.html  →  (connexion)  →  index.html  →  (jeu)
