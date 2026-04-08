@@ -1,13 +1,18 @@
-// Étapes 7-8-9 
-// Étape 7 : Trois buttons pour contrôler le jeu : Start, Pause, Restart
-// Étape 8 : Gérer le déplacement avec la souris
-// Étape 9 : Gérer le fil d'exécution avec setTimeout() au lieu de setInterval() 
-// On peut vérifier avec console.log() que les appels s'arrêtent.
+// Étapes  
+// Étape 07 : Trois buttons pour contrôler le jeu : Start, Pause, Restart
+// Étape 08 : Gérer le déplacement avec la souris
+// Étape 09 : Gérer le fil d'exécution avec setTimeout() au lieu de setInterval() 
+// Étape 10 : Gérer l’accélération
 
 const CELL_SIZE    = 5;
 const CELL_EMPTY   = 0;
 const CELL_PLAYER1 = 1;
 const CELL_PLAYER2 = 2;
+
+// Paramètres d'accélération - step 10
+const INTERVAL_START = 200;  // Délai initial (ms) — lent
+const INTERVAL_MIN   = 50;   // Délai minimum (ms) — limite de vitesse
+const ACCEL_STEP     = 1;    // Réduction du délai à chaque tick (ms)
 
 class LightCycle {
     constructor(startX, startY, color, controls, initialVY) {
@@ -57,7 +62,7 @@ class TronGame {
         this.scores   = { p1: 0, p2: 0, draws: 0 };
         this.result   = null;
         this.running  = false;
-        this.interval = 100; 
+        this.interval = INTERVAL_START; // Délai au debut, diminue à chaque tick
 
         this.mouseX0 = 0;
         this.mouseY0 = 0;
@@ -84,11 +89,13 @@ class TronGame {
             this.player2.color = e.target.value;
         });
 
-        // Stocker les coordonnées de souris (x0, y0) au début du glissement - step 8
+
+        // Stocker les coordonnées de souris au début du glissement - step 8 
         this.canvas.addEventListener("mousedown", (e) => {
             this.mouseX0 = e.clientX;
             this.mouseY0 = e.clientY;
         });
+
         // Calculer les deltas à la fin du glissement et changer la direction -step 8
         this.canvas.addEventListener("mouseup", (e) => {
             const dx = e.clientX - this.mouseX0;
@@ -116,25 +123,20 @@ class TronGame {
     }
 
     // Bouton Pause : arrête la boucle de jeu - step 7
-    pauseGame() {
-        this.running = false;
-        // Vérification console.log - step 9
-        console.log("Jeu en pause — boucle arrêtée.");
-    }
+
+    pauseGame() { this.running = false; }
 
     // Bouton Start : (re)démarre la boucle de jeu - step 7
-    startGame() {
-        if (!this.running) {
-            this.running = true;
-            this.loop();
-        }
-    }
 
+    startGame() {
+        if (!this.running) { this.running = true; this.loop(); }
+    }
+    
     // Bouton Restart : remet le tour à zéro sans effacer les scores - step 7
     restartRound() {
         this.result   = null;
         this.running  = false;
-        this.interval = 100; 
+        this.interval = INTERVAL_START; // Réinitialise la vitesse au redémarrage
         this.grid     = this.createGrid();
 
         this.player1.x = Math.floor(this.cols / 2); this.player1.y = this.rows - 2;
@@ -149,16 +151,18 @@ class TronGame {
     }
 
     // Quand running = false, on sort sans planifier un autre setTimeout - step 9
-    
+
     loop() {
-        //console.log("La boucle de jeu tourne..."); //Verification step 9
-        
-        if (!this.running) return; // <-- La vraie pause
+	//console.log("La boucle de jeu tourne..."); //Verification step 9
+        if (!this.running) return;
 
         this.update();
         this.draw();
 
-        // Se re-planifie une seule fois avec l'intervalle courant
+        // Accélération progressive - step 10
+        
+        this.interval = Math.max(INTERVAL_MIN, this.interval - ACCEL_STEP);
+	// Se re-planifie une seule fois - step 9
         setTimeout(() => this.loop(), this.interval);
     }
 
