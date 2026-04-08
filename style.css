@@ -2,7 +2,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     background: #222;
     margin: 0;
     font-family: monospace;
@@ -47,6 +47,25 @@ canvas {
     height: 24px;
     vertical-align: middle;
 }
+
+#btn-controls {
+    display: flex;
+    gap: 15px;
+}
+
+#btn-controls button {
+    padding: 8px 22px;
+    background: #008CFF;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 1em;
+    letter-spacing: 1px;
+}
+
+#btn-controls button:hover { background: #0070cc; }
 
 /* ---- Page de connexion ---- */
 #login-box {

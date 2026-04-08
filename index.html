@@ -6,7 +6,6 @@
 </head>
 <body>
     <div id="game-wrapper">
-        <!-- Tableau de pointage -->
         <div id="scoreboard">
             <span id="score-p1">J1 : 0</span>
             <span id="score-draws">Nuls : 0</span>
@@ -15,10 +14,16 @@
 
         <canvas id="myCanvas" width="750" height="750"></canvas>
 
-        <!-- Sélecteurs de couleur pour les traces -->
         <div id="color-controls">
             <label>Couleur J1 : <input type="color" id="color1" value="#ff0000"></label>
             <label>Couleur J2 : <input type="color" id="color2" value="#00ff00"></label>
+        </div>
+
+        <!-- Boutons de contrôle -->
+        <div id="btn-controls">
+            <button onclick="game.pauseGame()">Pause</button>
+            <button onclick="game.startGame()">Start</button>
+            <button onclick="game.restartRound()">Restart</button>
         </div>
     </div>
     <script src="script.js"></script>

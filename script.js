@@ -1,3 +1,9 @@
+// Étapes 7-8-9 
+// Étape 7 : Trois buttons pour contrôler le jeu : Start, Pause, Restart
+// Étape 8 : Gérer le déplacement avec la souris
+// Étape 9 : Gérer le fil d'exécution avec setTimeout() au lieu de setInterval() 
+// On peut vérifier avec console.log() que les appels s'arrêtent.
+
 const CELL_SIZE    = 5;
 const CELL_EMPTY   = 0;
 const CELL_PLAYER1 = 1;
@@ -22,6 +28,12 @@ class LightCycle {
         if (keyCode === this.controls.right && this.vx === 0) { this.vx =  1; this.vy =  0; }
     }
 
+    setDirection(vx, vy) {
+        if (!this.alive) return;
+        if (vx !== 0 && this.vx === 0) { this.vx = vx; this.vy = 0; }
+        if (vy !== 0 && this.vy === 0) { this.vx = 0;  this.vy = vy; }
+    }
+
     getNextPosition() { return { x: this.x + this.vx, y: this.y + this.vy }; }
     move(newX, newY)  { this.x = newX; this.y = newY; }
     die()             { this.alive = false; }
@@ -42,8 +54,13 @@ class TronGame {
         this.x0   = (this.canvas.width  - this.cols * CELL_SIZE) / 2;
         this.y0   = (this.canvas.height - this.rows * CELL_SIZE) / 2;
 
-        this.scores = { p1: 0, p2: 0, draws: 0 };
-        this.result = null;
+        this.scores   = { p1: 0, p2: 0, draws: 0 };
+        this.result   = null;
+        this.running  = false;
+        this.interval = 100; 
+
+        this.mouseX0 = 0;
+        this.mouseY0 = 0;
 
         this.player1 = new LightCycle(
             Math.floor(this.cols / 2), this.rows - 2,
@@ -60,13 +77,30 @@ class TronGame {
 
         document.addEventListener('keydown', (e) => this.handleInput(e));
 
-        // Changement de couleur des traces en temps réel
         document.getElementById("color1").addEventListener("input", (e) => {
             this.player1.color = e.target.value;
         });
         document.getElementById("color2").addEventListener("input", (e) => {
             this.player2.color = e.target.value;
         });
+
+        // Stocker les coordonnées de souris (x0, y0) au début du glissement - step 8
+        this.canvas.addEventListener("mousedown", (e) => {
+            this.mouseX0 = e.clientX;
+            this.mouseY0 = e.clientY;
+        });
+        // Calculer les deltas à la fin du glissement et changer la direction -step 8
+        this.canvas.addEventListener("mouseup", (e) => {
+            const dx = e.clientX - this.mouseX0;
+            const dy = e.clientY - this.mouseY0;
+            if (Math.abs(dx) > Math.abs(dy)) {
+                this.player1.setDirection(dx > 0 ? 1 : -1, 0);
+            } else {
+                this.player1.setDirection(0, dy > 0 ? 1 : -1);
+            }
+        });
+
+        this.draw();
     }
 
     createGrid() {
@@ -76,14 +110,32 @@ class TronGame {
     }
 
     handleInput(e) {
-        if (e.keyCode === 13 && this.result !== null) { this.resetRound(); return; }
+        if (e.keyCode === 13 && this.result !== null) { this.restartRound(); return; }
         this.player1.changeDirection(e.keyCode);
         this.player2.changeDirection(e.keyCode);
     }
 
-    resetRound() {
-        this.result = null;
-        this.grid   = this.createGrid();
+    // Bouton Pause : arrête la boucle de jeu - step 7
+    pauseGame() {
+        this.running = false;
+        // Vérification console.log - step 9
+        console.log("Jeu en pause — boucle arrêtée.");
+    }
+
+    // Bouton Start : (re)démarre la boucle de jeu - step 7
+    startGame() {
+        if (!this.running) {
+            this.running = true;
+            this.loop();
+        }
+    }
+
+    // Bouton Restart : remet le tour à zéro sans effacer les scores - step 7
+    restartRound() {
+        this.result   = null;
+        this.running  = false;
+        this.interval = 100; 
+        this.grid     = this.createGrid();
 
         this.player1.x = Math.floor(this.cols / 2); this.player1.y = this.rows - 2;
         this.player1.vx = 0; this.player1.vy = -1; this.player1.alive = true;
@@ -93,6 +145,21 @@ class TronGame {
 
         this.grid[this.player1.x][this.player1.y] = CELL_PLAYER1;
         this.grid[this.player2.x][this.player2.y] = CELL_PLAYER2;
+        this.draw();
+    }
+
+    // Quand running = false, on sort sans planifier un autre setTimeout - step 9
+    
+    loop() {
+        //console.log("La boucle de jeu tourne..."); //Verification step 9
+        
+        if (!this.running) return; // <-- La vraie pause
+
+        this.update();
+        this.draw();
+
+        // Se re-planifie une seule fois avec l'intervalle courant
+        setTimeout(() => this.loop(), this.interval);
     }
 
     update() {
@@ -108,12 +175,15 @@ class TronGame {
         if ((p1crashes && p2crashes) || headOn) {
             this.player1.die(); this.player2.die();
             this.result = "draw"; this.scores.draws++;
+            this.running = false;
         } else if (p1crashes) {
             this.player1.die();
             this.result = "player2"; this.scores.p2++;
+            this.running = false;
         } else if (p2crashes) {
             this.player2.die();
             this.result = "player1"; this.scores.p1++;
+            this.running = false;
         } else {
             this.grid[next1.x][next1.y] = CELL_PLAYER1;
             this.player1.move(next1.x, next1.y);
@@ -165,12 +235,10 @@ class TronGame {
         this.ctx.fillText(messages[this.result], this.canvas.width / 2, this.canvas.height / 2 - 20);
         this.ctx.fillStyle = "#fff";
         this.ctx.font = "22px monospace";
-        this.ctx.fillText("Appuyez ENTER pour rejouer", this.canvas.width / 2, this.canvas.height / 2 + 30);
+        this.ctx.fillText("ENTER pour rejouer  |  Restart pour recommencer", this.canvas.width / 2, this.canvas.height / 2 + 30);
     }
 
-    start() {
-        setInterval(() => { this.update(); this.draw(); }, 100);
-    }
+    start() { this.draw(); }
 }
 
 const game = new TronGame("myCanvas");
