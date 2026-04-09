@@ -1,4 +1,7 @@
-// Étapes  
+// ÉTAPE 03 : Détecter les collisions (murs et traces respectives)
+// ÉTAPE 04 : Gérer le match nul (Collision au même moment)
+// ÉTAPE 05 : Gérer plusieurs tours (Sauvegarde du pointage en mémoire)
+// ÉTAPE 06 : Permettre le changement de couleur (Écouteurs d'événements)
 // Étape 07 : Trois buttons pour contrôler le jeu : Start, Pause, Restart
 // Étape 08 : Gérer le déplacement avec la souris
 // Étape 09 : Gérer le fil d'exécution avec setTimeout() au lieu de setInterval() 
@@ -87,8 +90,10 @@ class TronGame {
         this.x0   = (this.canvas.width  - this.cols * CELL_SIZE) / 2;
         this.y0   = (this.canvas.height - this.rows * CELL_SIZE) / 2;
 
+        // Sauvegarde du score en mémoire - step 5
         this.scores   = { p1: 0, p2: 0, draws: 0 };
         this.result   = null;
+
         this.running  = false;
         this.interval = INTERVAL_START; // Délai au debut, diminue à chaque tick
 
@@ -109,7 +114,8 @@ class TronGame {
         this.grid[this.player2.x][this.player2.y] = CELL_PLAYER2;
 
         document.addEventListener('keydown', (e) => this.handleInput(e));
-
+        
+        // Écouteurs d'événements changement de couleur - step 6
         document.getElementById("color1").addEventListener("input", (e) => {
             this.player1.color = e.target.value;
         });
@@ -200,11 +206,13 @@ class TronGame {
 
         const next1 = this.player1.getNextPosition();
         const next2 = this.player2.getNextPosition();
-
+        // Détecter les collisions (murs et traces respectives) - step 3
         const p1crashes = this.checkCollision(next1.x, next1.y);
         const p2crashes = this.checkCollision(next2.x, next2.y);
-        const headOn    = (next1.x === next2.x && next1.y === next2.y);
+        // Collision frontale au même moment - step 4
+        const headOn    = (next1.x === next2.x && next1.y === next2.y); 
 
+        // Gérer le match nul - step 4 
         if ((p1crashes && p2crashes) || headOn) {
             this.player1.die(); this.player2.die();
             this.result = "draw"; this.scores.draws++;
