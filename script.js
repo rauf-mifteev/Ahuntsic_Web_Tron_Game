@@ -43,6 +43,34 @@ class LightCycle {
     move(newX, newY)  { this.x = newX; this.y = newY; }
     die()             { this.alive = false; }
 
+    // --- BONUS  ---
+    autoMove(grid, cols, rows) {
+        if (!this.alive) return;
+
+        // Position au prochain tick si on continue tout droit
+        const nextX = this.x + this.vx;
+        const nextY = this.y + this.vy;
+
+        // Fonction interne pour vérifier si une case est sécuritaire
+        const isSafe = (x, y) => {
+            if (x < 0 || x >= cols || y < 0 || y >= rows) return false; // Mur
+            return grid[x][y] === CELL_EMPTY; // Trace de moto
+        };
+
+        // Si la prochaine case n'est pas sécuritaire, on tourne !
+        if (!isSafe(nextX, nextY)) {
+            if (this.vx !== 0) { 
+                // On bouge à l'horizontale, on essaie de tourner à la verticale
+                if (isSafe(this.x, this.y + 1)) this.setDirection(0, 1);       // Essaie le Bas
+                else if (isSafe(this.x, this.y - 1)) this.setDirection(0, -1); // Sinon essaie le Haut
+            } else if (this.vy !== 0) { 
+                // On bouge à la verticale, on essaie de tourner à l'horizontale
+                if (isSafe(this.x + 1, this.y)) this.setDirection(1, 0);       // Essaie la Droite
+                else if (isSafe(this.x - 1, this.y)) this.setDirection(-1, 0); // Sinon essaie la Gauche
+            }
+        }
+    }
+
     draw(ctx, xOffset, yOffset) {
         ctx.fillStyle = this.alive ? "#ffffff" : "#555555";
         ctx.fillRect(xOffset + this.x * CELL_SIZE, yOffset + this.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
@@ -123,11 +151,9 @@ class TronGame {
     }
 
     // Bouton Pause : arrête la boucle de jeu - step 7
-
     pauseGame() { this.running = false; }
 
     // Bouton Start : (re)démarre la boucle de jeu - step 7
-
     startGame() {
         if (!this.running) { this.running = true; this.loop(); }
     }
@@ -136,7 +162,7 @@ class TronGame {
     restartRound() {
         this.result   = null;
         this.running  = false;
-        this.interval = INTERVAL_START; // Réinitialise la vitesse au redémarrage
+        this.interval = INTERVAL_START; 
         this.grid     = this.createGrid();
 
         this.player1.x = Math.floor(this.cols / 2); this.player1.y = this.rows - 2;
@@ -151,7 +177,6 @@ class TronGame {
     }
 
     // Quand running = false, on sort sans planifier un autre setTimeout - step 9
-
     loop() {
 	//console.log("La boucle de jeu tourne..."); //Verification step 9
         if (!this.running) return;
@@ -160,7 +185,6 @@ class TronGame {
         this.draw();
 
         // Accélération progressive - step 10
-        
         this.interval = Math.max(INTERVAL_MIN, this.interval - ACCEL_STEP);
 	// Se re-planifie une seule fois - step 9
         setTimeout(() => this.loop(), this.interval);
@@ -168,6 +192,11 @@ class TronGame {
 
     update() {
         if (!this.player1.alive || !this.player2.alive) return;
+
+        // --- BONuS : Si la case IA est cochée, le Joueur 2 utilise autoMove()
+        if (document.getElementById("ai-toggle").checked) {
+            this.player2.autoMove(this.grid, this.cols, this.rows);
+        }
 
         const next1 = this.player1.getNextPosition();
         const next2 = this.player2.getNextPosition();
