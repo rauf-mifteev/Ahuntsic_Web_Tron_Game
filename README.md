@@ -1,10 +1,12 @@
 # Jeu Tron — Travail Pratique Développement Web
 
-## Aperçu du projet
+Le lien vers le dépôt GitHub : **https://github.com/rauf-mifteev/Ahuntsic_Web_Tron_Game**
+
+## Description
 
 Ce projet est réalisé dans le cadre du cours de Développement Web au Collège Ahuntsic. Il consiste à compléter et enrichir un jeu Tron multijoueur en **JavaScript** en utilisant la programmation orientée objet et les API natives du navigateur (DOM, Canvas, Événements).
 
-En partant d'un fichier HTML unique fonctionnel, le projet est restructuré et enrichi en 10 étapes successives cumulatives :
+En partant d'un fichier HTML unique fonctionnel, le projet est restructuré et enrichi en **10 étapes successives** cumulatives :
 
 | Étape | Fonctionnalité | Concepts appliqués |
 |---|---|---|
@@ -15,11 +17,15 @@ En partant d'un fichier HTML unique fonctionnel, le projet est restructuré et e
 | **Étape 5** | **Plusieurs tours** : Sauvegarde du pointage en mémoire et mécanisme de relance sans rechargement de page. | DOM, état d'objet |
 | **Étape 6** | **Changement de couleur** : Sélecteurs de couleur en temps réel pour la trace de chaque joueur. | Événement `input`, `<input type="color">` |
 | **Étape 7** | **Boutons de contrôle** : Pause, Start et Restart avec gestion d'état de la boucle de jeu. | Événements, état booléen |
-| **Étape 8** | **Contrôle à la souris** : Direction du joueur 1 via un geste de glissement (drag) sur le canvas. | `mousedown`, `mouseup`, delta |
+| **Étape 8** | **Contrôle à la souris** : Direction du Joueur 1 via un geste de glissement (drag) sur le canvas. | `mousedown`, `mouseup`, delta |
 | **Étape 9** | **Gestion du fil d'exécution** : Remplacement de `setInterval` par `setTimeout` récursif pour une pause réelle. | Timers JavaScript |
 | **Étape 10** | **Accélération** : Augmentation progressive de la vitesse à chaque tick avec un délai minimum configurable. | `setTimeout` à délai variable |
 
-L'objectif principal est de mettre en pratique les concepts de programmation orientée objet, de manipulation du DOM, de gestion des événements et du rendu sur canvas dans un contexte de jeu interactif.
+### **Étape 11** (Partie Bonis) Implémentés
+
+Afin de pousser le projet plus loin, une fonctionnalité supplémentaire a été développée :
+
+**Intelligence Artificielle (Bot) :** Ajout d'un algorithme de survie basique pour le Joueur 2, activable via une case à cocher. Le bot analyse les cellules adjacentes et modifie sa trajectoire pour éviter les murs et les traces.
 
 ## Prérequis
 
@@ -31,26 +37,31 @@ Le projet ne requiert aucune dépendance externe. Il tourne entièrement dans le
 
 ## Lancer le projet
 
-Aucune installation n'est requise. Ouvrez simplement le fichier `login.html` dans un navigateur web moderne (Chrome, Firefox, Edge).
+Aucune installation n'est requise. Ouvrez simplement le fichier `login.html` dans un navigateur web moderne (Chrome, Firefox, Edge, Opera).
 
-```
-login.html  →  (connexion)  →  index.html  →  (jeu)
-```
+    login.html  →  (connexion)  →  index.html  →  (jeu)
 
-Les identifiants de test sont les suivants :
+Les credentials de test sont les suivants :
 
-```
-Courriel  : joueur@tron.com
-Mot de passe : tron1234
-```
+    Courriel  : joueur@tron.com
+    Mot de passe : tron1234
+
+## Structure des fichiers
+
+* `login.html` : Interface de la page de connexion.
+* `login.js` : Logique de validation du formulaire et redirection.
+* `index.html` : Structure principale du jeu, incluant le canvas, les contrôles et les tableaux de bord.
+* `style.css` : Feuille de style globale (incluant les effets rétro).
+* `script.js` : Logique applicative du jeu (Classes `TronGame` et `LightCycle`, boucle de rendu, détection de collisions, IA basique).
 
 ## Contrôles en jeu
 
 | Action | Joueur 1 | Joueur 2 |
 |---|---|---|
-| Haut | Fleche haut | W |
-| Bas | Fleche bas | S |
-| Gauche | Fleche gauche | A |
-| Droite | Fleche droite | D |
+| Haut | Flèche haut | W |
+| Bas | Flèche bas | S |
+| Gauche | Flèche gauche | A |
+| Droite | Flèche droite | D |
 | Direction (souris) | Glisser sur le canvas | — |
-| Rejouer | Entree | — |
+| Activer l'IA | — | Coche "IA (J2)" |
+| Rejouer la manche | Enter | — |
